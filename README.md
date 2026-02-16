@@ -6,7 +6,7 @@ This project investigates the application of **Scientific Machine Learning (SciM
 **Key Achievements:**
 * **Baseline Established:** A pure physics-based approach set a strong benchmark (RMSE 0.2757).
 * **Physics Validation:** The **Square Root Law** (SEI Layer Growth) was mathematically validated as the dominant aging mechanism for this dataset.
-* **Architecture Breakthrough:** A **Hybrid LSTM-PINN** architecture achieved a state-of-the-art **RMSE of 0.0674**, outperforming the pure physics baseline by **4x**.
+* **Architecture Breakthrough:** A **Hybrid LSTM-PINN** architecture achieved a state-of-the-art **RMSE of 0.0448**, outperforming the pure physics baseline by **4x**.
 
 ---
 
@@ -35,10 +35,11 @@ Before introducing neural networks, we established a "Pure Physics" baseline. We
   > **C(t) = 1 - α * √t**
 * **Result:** RMSE = 0.2757
 * **Observation:** The model captured the global decay trend but missed local fluctuations (capacity regeneration) caused by battery rest periods.
+<img width="1001" height="547" alt="image" src="https://github.com/user-attachments/assets/12421eec-9216-4c18-8136-e56571db3868" />
 
 ---
 
-### 🔬 Phase 1: Physics Model Selection (`Experiment-1.ipynb`)
+###  Phase 1: Physics Model Selection (`Experiment-1.ipynb`)
 We tested four fundamental differential equations to identify the governing physics of the B0005 battery.
 
 #### **Model A: Power Law (General Degradation)**
@@ -46,12 +47,16 @@ We tested four fundamental differential equations to identify the governing phys
   > **dC/dt = -α * C^β**
 * **RMSE:** 0.3682
 * **Verdict:** **Overfitted.** The additional parameter β made the model too flexible, fitting noise rather than the trend.
+  <img width="1001" height="547" alt="image" src="https://github.com/user-attachments/assets/521664cb-a5ef-40fc-90d0-5336deeab3f8" />
+
 
 #### **Model B: S-Curve (Verhulst / Logistic)**
 * **Equation:** Assumes degradation slows down as capacity drops (saturation effect).
   > **dC/dt = -α * C * (1 - C)**
 * **RMSE:** 0.5039
 * **Verdict:** **Failed.** This equation predicts a stable equilibrium, which contradicts the reality of continuous, accelerating battery degradation.
+  <img width="1001" height="547" alt="image" src="https://github.com/user-attachments/assets/a6b3abd0-cb96-4145-aca2-cebd0d3abda4" />
+
 
 #### **Model C: Arrhenius Law (Temperature-Aware)**
 * **Hypothesis:** Degradation is driven by temperature. We fed both Time (t) and Temperature (T) into the network.
@@ -59,12 +64,16 @@ We tested four fundamental differential equations to identify the governing phys
   > **dC/dt = -A * exp( -Ea / (R*T) ) * C**
 * **RMSE:** **0.2988**
 * **Verdict:** **Good, but not best.** While it captured temperature fluctuations, the B0005 dataset is cycled at mostly controlled room temperatures, making Time a stronger predictor than Temperature for this specific case.
+  <img width="1001" height="547" alt="image" src="https://github.com/user-attachments/assets/3a13542f-9f7c-41b7-a244-b8e379eca74f" />
+
 
 #### **Model D: Square Root Law (SEI Layer Growth)**
 * **Equation:** Derived from Fick's Law of Diffusion. As the SEI layer grows, it becomes thicker, slowing down further growth (rate is proportional to 1/√t).
   > **dC/dt = -α / (2√t)**
 * **RMSE:** **0.2795**
 * **Verdict:** ** Best Physics Fit.** Confirmed that diffusion-limited SEI growth is the dominant aging mechanism for this cell.
+  <img width="1001" height="547" alt="image" src="https://github.com/user-attachments/assets/f7212e74-847f-43cc-8b9c-f13e88b58e76" />
+
 
 ---
 
@@ -75,10 +84,12 @@ We tested four fundamental differential equations to identify the governing phys
 * **Outcome:** **Failure (RMSE 0.6113).**
 * **Analysis:** The model converged to a **Trivial Solution**. It learned that by setting α ≈ 0, the physics residual became zero. It minimized the loss by "cheating" the physics rather than fitting the data.
 * **Lesson:** Fixed weighing (λ=0.1) is more robust for simple monotonic degradation problems.
+  <img width="1001" height="568" alt="image" src="https://github.com/user-attachments/assets/c14c5ace-38a7-4df0-9466-a38b551c4b45" />
+
 
 ---
 
-###  Phase 3: Hybrid Architecture - The Champion (`Experiment_3.ipynb`)
+###  Phase 3: Hybrid Architecture - The Champion (`Experiment-3.ipynb`)
 **Hypothesis:** Battery degradation has "memory." The state at cycle *t* depends on the trajectory of cycles *[t-10, ... t]*.
 
 * **Architecture:**
@@ -87,12 +98,14 @@ We tested four fundamental differential equations to identify the governing phys
     * **Physics Constraint:** Applied to the *output trend*.
 
 * **Results:**
-    * **RMSE:** **0.0674**
+    * **RMSE:** **0.0448**
     * **Improvement:** **314%** over Baseline.
 
 * **Why it Won:**
     * The **LSTM** captured the "heaps" (capacity regeneration events) which appear as local non-linearities.
     * The **Square Root Physics Law** acted as a regularizer, preventing the LSTM from overfitting to noise or making physically impossible predictions (e.g., capacity increasing over time).
+      <img width="1001" height="547" alt="image" src="https://github.com/user-attachments/assets/7209b886-dd8b-420e-8549-125b2c97c611" />
+
 
 ---
 
