@@ -133,3 +133,25 @@ with tab2:
 
         except ValueError:
             st.error("❌ Invalid Format. Please enter only numbers separated by commas.")
+
+
+# ---------------------------------------------------------
+# 5. FOOTER
+# ---------------------------------------------------------
+st.markdown("---")
+st.markdown(
+    """
+    <style>
+    .footer {
+        text-align: center;
+        color: grey;
+        font-size: small;
+        margin-top: 50px;
+    }
+    </style>
+    <div class="footer">
+        Made by Subham Mohanty
+    </div>
+    """,
+    unsafe_allow_html=True
+)
