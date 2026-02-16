@@ -10,9 +10,19 @@ This project investigates the application of **Scientific Machine Learning (SciM
 
 ---
 
-## 2. Methodology & Mathematical Framework
+## 2. Dataset Information
+* **Source:** NASA Prognostics Center of Excellence (PCoE)
+* **Dataset Name:** Li-Ion Battery Aging Data Set
+* **Battery ID Used:** B0005
+* **Chemistry:** 18650 Lithium-Ion (Cathode: LiCoO2, Anode: Graphite)
+* **Experimental Condition:** Repeated charge and discharge cycles at room temperature (24°C) until capacity dropped by 30%.
+* **Link to Dataset:** [NASA PCoE Data Repository](https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/)
 
-### 2.1 The Physics-Informed Loss Function
+---
+
+## 3. Methodology & Mathematical Framework
+
+### 3.1 The Physics-Informed Loss Function
 Unlike traditional neural networks that only minimize prediction error, a PINN minimizes a composite loss function comprising a **Data Term** (L_data) and a **Physics Term** (L_physics).
 
 > **Total Loss = L_data + λ * L_physics**
@@ -26,7 +36,7 @@ Where:
 
 ---
 
-## 3. Experiment Analysis
+## 4. Experiment Analysis
 
 ###  Phase 0: The Baseline Model
 Before introducing neural networks, we established a "Pure Physics" baseline. We fit the **Square Root Law** directly to the data.
@@ -109,7 +119,7 @@ We tested four fundamental differential equations to identify the governing phys
 
 ---
 
-## 4. Final Conclusion
+## 5. Final Conclusion
 The **LSTM-PINN** is the optimal architecture for Battery Prognostics.
 1.  **Accuracy:** It is 4x more accurate than standard physics models.
 2.  **Robustness:** Unlike pure data-driven LSTMs, it respects the **1/√t** decay law, making it safer for long-term extrapolation.
